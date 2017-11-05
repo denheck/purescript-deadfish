@@ -1,5 +1,5 @@
 {
-  "name": "deadfish-lang",
+  "name": "purescript-deadfish",
   "ignore": [
     "**/.*",
     "node_modules",
