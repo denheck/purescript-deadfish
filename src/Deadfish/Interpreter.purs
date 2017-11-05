@@ -1,19 +1,28 @@
-module Deadfish.Interpreter (run) where
+module Deadfish.Interpreter (run, emptyState, withRegister, withOutput) where
 
 import Data.Foldable (foldl)
 import Data.String (toCharArray)
 import Data.Tuple (Tuple(..))
 import Prelude (show, ($), (*), (+), (-), (<>))
 
-type Input = String
-type Output = String
-type Register = Int
+type State = Tuple String Int
 
-run :: Input -> Register -> Tuple Output Register
-run input register = 
-  foldl interpret (Tuple "" register) (toCharArray input)
+withOutput :: State -> String -> State
+withOutput (Tuple _ register) newOutput =
+  Tuple newOutput register 
 
-interpret :: Tuple Output Register -> Char -> Tuple Output Register
+withRegister :: State -> Int -> State
+withRegister (Tuple output _) register =
+  Tuple output register
+
+emptyState :: State
+emptyState = Tuple "" 0
+
+run :: State -> String -> State
+run state input = 
+  foldl interpret state (toCharArray input)
+
+interpret :: State -> Char -> State
 interpret result char = resetRegister $ interpret' result char
   where
     resetRegister (Tuple output 256) = Tuple output 0
