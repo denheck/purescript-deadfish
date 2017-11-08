@@ -13,7 +13,7 @@ import Test.Spec.Runner (RunnerEffects, run)
 main :: Eff (RunnerEffects ()) Unit
 main = do
   run [consoleReporter] do
-    describe "deadfish-lang" do
+    describe "Interpreter" do
       it "increments the register by 1" do
         shouldEqual (Deadfish.run emptyState "i") $ withRegister emptyState 1
       it "decrements the register by 1" do
