@@ -1,9 +1,10 @@
 module Deadfish.Interpreter (run, emptyState, withRegister, withOutput) where
 
+import Data.Char (fromCharCode)
 import Data.Foldable (foldl)
-import Data.String (toCharArray)
+import Data.String (singleton, toCharArray)
 import Data.Tuple (Tuple(..))
-import Prelude (show, ($), (*), (+), (-), (<>))
+import Prelude (show, ($), (*), (+), (-), (<<<), (<>))
 
 type State = Tuple String Int
 
@@ -32,4 +33,5 @@ interpret result char = resetRegister $ interpret' result char
     interpret' (Tuple output register) 'd' = Tuple output $ register - 1
     interpret' (Tuple output register) 's' = Tuple output $ register * register
     interpret' (Tuple output register) 'o' = Tuple (output <> (show register)) register
+    interpret' (Tuple output register) 'c' = Tuple (output <> ((singleton <<< fromCharCode) register)) register
     interpret' result _ = result

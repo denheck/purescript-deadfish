@@ -30,3 +30,5 @@ main = do
          shouldEqual (Deadfish.run emptyState "diissisdo") $ withOutput (withRegister emptyState 288) "288"
       it "ignores characters it can't understand" do
          shouldEqual (Deadfish.run emptyState "qwerty") $ emptyState
+      it "outputs character of ascii code in register" do
+         shouldEqual (Deadfish.run (withRegister emptyState 75) "c") $ withOutput (withRegister emptyState 75) "K"
