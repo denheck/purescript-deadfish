@@ -1,37 +1,40 @@
-module Deadfish.Interpreter (run, emptyState, withRegister, withOutput) where
+module Deadfish.Interpreter (run, emptyState, withRegister, withOutput, State) where
 
 import Data.Char (fromCharCode)
 import Data.Foldable (foldl)
 import Data.String (singleton, toCharArray)
-import Data.Tuple (Tuple(..))
-import Prelude (show, ($), (*), (+), (-), (<<<), (<>))
+import Prelude (class Eq, class Show, negate, show, ($), (&&), (*), (+), (-), (<<<), (<>), (==))
 
-type State = Tuple String Int
+newtype State = State { output :: String, register :: Int }
+
+instance eqState :: Eq State where 
+  eq (State state1) (State state2) = state1.output == state2.output && state1.register == state2.register
+
+instance showState :: Show State where
+  show (State state) = "State ('" <> state.output <> "', " <> show state.register <> ")"
 
 withOutput :: State -> String -> State
-withOutput (Tuple _ register) newOutput =
-  Tuple newOutput register 
+withOutput (State state) newOutput = State (state { output = newOutput })
 
 withRegister :: State -> Int -> State
-withRegister (Tuple output _) register =
-  Tuple output register
+withRegister (State state) newRegister = State (state { register = newRegister })
 
 emptyState :: State
-emptyState = Tuple "" 0
+emptyState = State { output: "", register: 0 }
 
 run :: State -> String -> State
 run state input = 
   foldl interpret state (toCharArray input)
 
 interpret :: State -> Char -> State
-interpret result char = resetRegister $ interpret' result char
+interpret (State result) char = State (resetRegister $ interpret' result char)
   where
-    resetRegister (Tuple output 256) = Tuple output 0
-    resetRegister (Tuple output -1) = Tuple output 0
-    resetRegister result = result
-    interpret' (Tuple output register) 'i' = Tuple output $ register + 1
-    interpret' (Tuple output register) 'd' = Tuple output $ register - 1
-    interpret' (Tuple output register) 's' = Tuple output $ register * register
-    interpret' (Tuple output register) 'o' = Tuple (output <> (show register)) register
-    interpret' (Tuple output register) 'c' = Tuple (output <> ((singleton <<< fromCharCode) register)) register
+    resetRegister state | state.register == 256 = state { register = 0 }
+    resetRegister state | state.register == -1 = state { register = 0 }
+    resetRegister state = state
+    interpret' state 'i' = state { register = state.register + 1}
+    interpret' state 'd' = state { register = state.register - 1 }
+    interpret' state 's' = state { register = state.register * state.register }
+    interpret' state 'o' = state { output = state.output <> (show state.register) }
+    interpret' state 'c' = state { output = state.output <> ((singleton <<< fromCharCode) state.register) }
     interpret' result _ = result

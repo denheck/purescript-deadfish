@@ -19,7 +19,7 @@ import Node.Yargs.Setup (example, usage)
 
 app :: forall eff a. Boolean -> String -> Eff (fs :: FS, readline :: READLINE, console :: CONSOLE, exception :: EXCEPTION, st :: ST a | eff) Unit
 app false ""     = pure unit -- TODO: should be an error
-app false source = (logShow <<< fst <<< (run emptyState)) =<< readTextFile UTF8 source
+app false source = (logShow <<< (run emptyState)) =<< readTextFile UTF8 source
 app true _  = do
   interface <- createConsoleInterface noCompletion
   ref <- newSTRef emptyState

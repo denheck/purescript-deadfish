@@ -32,3 +32,6 @@ main = do
          shouldEqual (Deadfish.run emptyState "qwerty") $ emptyState
       it "outputs character of ascii code in register" do
          shouldEqual (Deadfish.run (withRegister emptyState 75) "c") $ withOutput (withRegister emptyState 75) "K"
+      it "loops bracketed instructions 10 times" do
+         shouldEqual (Deadfish.run emptyState "iisiiiis{ic}{ic}icicicicicic") $ withOutput emptyState "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
