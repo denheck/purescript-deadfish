@@ -12,7 +12,8 @@
     "purescript-tuples": "^4.1.0",
     "purescript-strings": "^3.3.1",
     "purescript-node-readline": "^3.1.0",
-    "purescript-yargs": "^3.1.0"
+    "purescript-yargs": "^3.1.0",
+    "purescript-formatters": "^3.0.0"
   },
   "devDependencies": {
     "purescript-psci-support": "^3.0.0",
