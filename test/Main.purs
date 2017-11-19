@@ -29,11 +29,15 @@ main = do
       it "interprets multiple characters" do
          shouldEqual (Deadfish.run emptyState "diissisdo") $ withOutput (withRegister emptyState 288) "288"
       it "ignores characters it can't understand" do
-         shouldEqual (Deadfish.run emptyState "qwerty") $ emptyState
+         shouldEqual (Deadfish.run emptyState "qytbx") $ emptyState
       it "outputs character of ascii code in register" do
          shouldEqual (Deadfish.run (withRegister emptyState 75) "c") $ withOutput (withRegister emptyState 75) "K"
       it "loops bracketed instructions 10 times" do
          shouldEqual (Deadfish.run emptyState "iisiiiis{ic}{ic}icicicicicic") $ withOutput (withRegister emptyState 90) "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
       it "does not execute parenthesized commands when accumulator is 0" do
          shouldEqual (Deadfish.run emptyState "(i)") $ emptyState
+      it "won't execute instructions after halt" do
+         shouldEqual (Deadfish.run emptyState "hi") $ emptyState
+      it "outputs Hello, World! greeting" do
+         shouldEqual (Deadfish.run emptyState "w") $ withOutput emptyState "Hello, World!"
 

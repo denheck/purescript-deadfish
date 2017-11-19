@@ -7,7 +7,7 @@ import Data.String (singleton, toCharArray)
 import Deadfish.Lexer (lex, Token(..))
 import Prelude (class Eq, class Show, negate, show, ($), (&&), (*), (+), (-), (<<<), (<>), (==))
 
-newtype State = State { output :: String, register :: Int }
+newtype State = State { output :: String, register :: Int, halted :: Boolean }
 
 instance eqState :: Eq State where 
   eq (State state1) (State state2) = state1.output == state2.output && state1.register == state2.register
@@ -22,7 +22,7 @@ withRegister :: State -> Int -> State
 withRegister (State state) newRegister = State (state { register = newRegister })
 
 emptyState :: State
-emptyState = State { output: "", register: 0 }
+emptyState = State { output: "", register: 0, halted: false }
 
 run :: State -> String -> State
 run state input = 
@@ -32,11 +32,14 @@ run state input =
       resetRegister state | state.register == 256 = state { register = 0 }
       resetRegister state | state.register == -1 = state { register = 0 }
       resetRegister state = state
+      interpret' state token | state.halted == true = state
+      interpret' state (Command 'w') = state { output = state.output <> "Hello, World!"}
       interpret' state (Command 'i') = state { register = state.register + 1 }
       interpret' state (Command 'd') = state { register = state.register - 1 }
       interpret' state (Command 's') = state { register = state.register * state.register }
       interpret' state (Command 'o') = state { output = state.output <> (show state.register) }
-      interpret' state (Command 'c')= state { output = state.output <> ((singleton <<< fromCharCode) state.register) }
+      interpret' state (Command 'c') = state { output = state.output <> ((singleton <<< fromCharCode) state.register) }
+      interpret' state (Command 'h') = state { halted = true }
       interpret' state (Repeat tokens) = foldl interpret' state $ repeat tokens 10
       interpret' state (Conditional tokens) | state.register == 0 = state
       interpret' state (Conditional tokens) = foldl interpret' state tokens
