@@ -34,4 +34,6 @@ main = do
          shouldEqual (Deadfish.run (withRegister emptyState 75) "c") $ withOutput (withRegister emptyState 75) "K"
       it "loops bracketed instructions 10 times" do
          shouldEqual (Deadfish.run emptyState "iisiiiis{ic}{ic}icicicicicic") $ withOutput (withRegister emptyState 90) "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      it "does not execute parenthesized commands when accumulator is 0" do
+         shouldEqual (Deadfish.run emptyState "(i)") $ emptyState
 

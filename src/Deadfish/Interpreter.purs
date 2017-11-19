@@ -37,5 +37,7 @@ run state input =
       interpret' state (Command 's') = state { register = state.register * state.register }
       interpret' state (Command 'o') = state { output = state.output <> (show state.register) }
       interpret' state (Command 'c')= state { output = state.output <> ((singleton <<< fromCharCode) state.register) }
-      interpret' state (Repeat tokens) =  foldl interpret' state $ repeat tokens 10
+      interpret' state (Repeat tokens) = foldl interpret' state $ repeat tokens 10
+      interpret' state (Conditional tokens) | state.register == 0 = state
+      interpret' state (Conditional tokens) = foldl interpret' state tokens
       interpret' state _ = state

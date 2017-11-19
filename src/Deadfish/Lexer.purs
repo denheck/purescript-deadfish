@@ -52,4 +52,10 @@ lex' (Tuple tokens characters) =
         in
           lex' (Tuple (tokens <> [(Repeat repeatTokens)]) restCharacters)
       Just '}' -> (Tuple tokens restCharacters)
+      Just '(' -> 
+        let
+          (Tuple conditionalTokens restCharacters) = lex' (Tuple [] restCharacters)
+        in
+          lex' (Tuple (tokens <> [(Conditional conditionalTokens)]) restCharacters)
+      Just ')' -> (Tuple tokens restCharacters)
       Just char -> lex' (Tuple (tokens <> [Command char]) restCharacters)
